@@ -84,6 +84,8 @@
 
     function changeVisualCue(keyId) {
       const button = document.querySelector(`.key[data-key="${keyId}"]`);
+      if (!button) return;
+
       button.classList.add('playing');
     }
 
