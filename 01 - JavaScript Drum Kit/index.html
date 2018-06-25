@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>JS Drum Kit</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
 
+<body>
 
   <div class="keys">
     <div data-key="65" class="key">
@@ -57,27 +58,44 @@
   <audio data-key="75" src="sounds/tom.wav"></audio>
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<script>
-  function removeTransition(e) {
-    if (e.propertyName !== 'transform') return;
-    e.target.classList.remove('playing');
-  }
+  <script>
+   
+    const buttons = document.querySelectorAll('.key');
+    buttons.forEach(button => button.addEventListener('transitionend', undoVisualCue));
 
-  function playSound(e) {
-    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
-    const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
-    if (!audio) return;
+    window.addEventListener('keydown', playInstrument);
 
-    key.classList.add('playing');
-    audio.currentTime = 0;
-    audio.play();
-  }
+    function playInstrument(e) {
+      const keyId = e.keyCode;
 
-  const keys = Array.from(document.querySelectorAll('.key'));
-  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
-  window.addEventListener('keydown', playSound);
-</script>
+      playAudio(keyId);
+      changeVisualCue(keyId);
+    }
 
+    function playAudio(keyId) {
+      const audio = document.querySelector(`audio[data-key="${keyId}"`);
+
+      if (!audio) return;
+
+      // rewind in case of overlapping plays
+      audio.currentTime = 0;
+      audio.play();
+    }
+
+    function changeVisualCue(keyId) {
+      const button = document.querySelector(`.key[data-key="${keyId}"]`);
+      button.classList.add('playing');
+    }
+
+
+    function undoVisualCue(e) {
+      const event = e.propertyName;
+      if (event !== 'transform') return;
+
+      this.classList.remove('playing');
+    }
+
+  </script>
 
 </body>
 </html>
