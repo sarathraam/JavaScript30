@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+
+<body>
+  <canvas id="draw" width="800" height="800"></canvas>
+
+  <script>
+
+    const canvas = document.querySelector('#draw');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const ctx = canvas.getContext('2d');
+
+    ctx.strokeStyle = '#BADA55';
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 20;
+
+    let isDrawing = false,
+      lastX = 0,
+      lastY = 0,
+      hue = 0,
+      lineWidth = 1,
+      thicken = true;
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDrawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    });
+
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mouseout', () => isDrawing = false);
+
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(e) {
+
+      if (!isDrawing) return;
+
+      ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+      ctx.lineWidth = lineWidth;
+
+      ctx.beginPath();
+
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(e.offsetX, e.offsetY);
+
+      ctx.stroke();
+
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+      hue = (hue + 1) % 360;
+      lineWidth += (thicken ? +1 : -1);
+
+      switch (lineWidth) {
+        case 60:
+          thicken = false;
+          break;
+        case 1:
+          thicken = true;
+          break;
+        default:
+          break;
+      }
+
+    }
+
+  </script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+  </style>
+
+</body>
+
+</html>
